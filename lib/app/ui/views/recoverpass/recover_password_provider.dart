@@ -5,7 +5,7 @@ import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/recover_pass_
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/recover_pass_reset.dart';
 import 'package:semco_app_asistio/core/helpers/custom_snackbar.dart';
 
-class RecoverPassController with ChangeNotifier {
+class RecoverPassProvider with ChangeNotifier {
   final UserProvider userProvider = UserProvider();
   bool _isVisiblePass = false;
   bool _isLoading = false;

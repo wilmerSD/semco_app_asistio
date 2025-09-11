@@ -9,4 +9,5 @@ class Keys {
   static const kIdRole = "kIdRole";
   static const kNameUser = "kNameUser";
   static const kEmail = "kEmail";
+  static const kSaveCredential = "kSaveCredential";
 }

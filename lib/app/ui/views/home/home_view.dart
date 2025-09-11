@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/ui/components/alert_dialog_comp.dart';
-import 'package:semco_app_asistio/app/ui/views/home/home_controller.dart';
+import 'package:semco_app_asistio/app/ui/components/btn_primary_ink.dart';
+import 'package:semco_app_asistio/app/ui/views/home/home_provider.dart';
 import 'package:semco_app_asistio/app/ui/views/home/widgets/appBar_home.dart';
-import 'package:semco_app_asistio/app/ui/views/home/widgets/camera_screen%20copy.dart';
 import 'package:semco_app_asistio/app/ui/views/home/widgets/camera_screen.dart';
 import 'package:semco_app_asistio/app/ui/views/home/widgets/drawer_menu_app.dart';
 import 'package:semco_app_asistio/app/ui/views/home/widgets/recomendations.dart';
@@ -27,12 +28,13 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     isPlaying = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final homecontroller = Provider.of<HomeController>(
+      final homeProvider = Provider.of<HomeProvider>(
         context,
         listen: false,
       );
-      homecontroller.timeProvider();
-      homecontroller.initializeLocalization();
+      homeProvider.timeProvider();
+      homeProvider.initializeLocalization();
+      homeProvider.getInfoAssistant();
     });
     confettiController.addListener(() {
       setState(() {
@@ -43,10 +45,9 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    print('hola home');
-    final homecontroller = Provider.of<HomeController>(context, listen: false);
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
     String dateFormatted =
-        '${homecontroller.getDayName()} ${homecontroller.getDayNumber()} de ${homecontroller.getMontName()}';
+        '${homeProvider.getDayName()} ${homeProvider.getDayNumber()} de ${homeProvider.getMontName()}';
     Widget toolTip = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -55,18 +56,20 @@ class _HomeViewState extends State<HomeView> {
           mainAxisAlignment: MainAxisAlignment.start,
           // crossAxisAlignment: CrossAxisAlignment.baseline,
           children: [
-            Container(
-              // color: Colors.amber,
-              child: Text(
-                homecontroller.currentTime,
-                style: AppTextStyle(context).bold45(
-                  color: AppColors.textQuaternaryBasic(context),
-                  fontWeight: FontWeight.bold,
-                  // height: 5.0
-                ),
-                textHeightBehavior: TextHeightBehavior(),
-              ),
+            Consumer<HomeProvider>(
+              builder: (context, homeProvider, child) {
+                return Text(
+                  homeProvider.currentTime,
+                  style: AppTextStyle(context).bold45(
+                    color: AppColors.textQuaternaryBasic(context),
+                    fontWeight: FontWeight.bold,
+                    // height: 5.0
+                  ),
+                  textHeightBehavior: TextHeightBehavior(),
+                );
+              },
             ),
+
             Text(
               dateFormatted,
               style: TextStyle(
@@ -109,47 +112,118 @@ class _HomeViewState extends State<HomeView> {
         ),
       ],
     );
-   
+
     return Scaffold(
+      // appBar: AppBar(),
       backgroundColor: AppColors.backgroundColor(context),
       drawer: const DrawerMenuApp(),
-      body: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Column(
-            spacing: 10.0,
-            mainAxisAlignment: MainAxisAlignment.start, // Espaciar widgets
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(children: [const AppBarHome(), toolTip]),
-              ),
-              //  InkWell(
-              //   onTap: () {
-              //     homecontroller.activateConffeti();
-              //   },
-              //   child: Container(color:Colors.red, height: 40,),
-              // ),
-              const Expanded(child: CameraScreen()),
-              /* SizedBox(
-                height: 10,
-              ), */
-            ],
-          ),
-
-          Positioned(
-            top: 50.0,
-            child: ConfettiWidget(
-              gravity: 1.0,
-              confettiController: homecontroller.confettiController,
-              blastDirection: pi / 2,
-              numberOfParticles: 300,
-              maxBlastForce: 50,
-              emissionFrequency: 0.2,
-              blastDirectionality: BlastDirectionality.explosive,
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Column(
+               spacing: 10.0,
+              mainAxisAlignment: MainAxisAlignment.start, // Espaciar widgets
+        
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(children: [const AppBarHome(), toolTip]),
+                ),
+                //  InkWell(
+                //   onTap: () {
+                //     homeProvider.activateConffeti();
+                //   },
+                //   child: Container(color: Colors.red, height: 40,),
+                // ),
+                SizedBox(height: 15.0,),
+                Consumer<HomeProvider>(
+                  builder: (context, homeProvider, child) {
+                    return homeProvider.infoAssistObject.asistenciaTipo == 'CO'
+                        ? Spacer()
+                        : const SizedBox();
+                  },
+                ),
+                Consumer<HomeProvider>(
+                  builder: (context, homeProvider, child) {
+                    return homeProvider.infoAssistObject.asistenciaTipo == 'CO'
+                        ? Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundColor(context),
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.shadowColor(context),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Column(
+                              spacing: 20.0,
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  child: Lottie.asset(
+                                    'assets/Animation_assistance_completed.json',
+                                    repeat: false,
+                                  ),
+                                ),
+                                Center(
+                                  child: RichText(
+                                    textAlign:  TextAlign.center,
+                                    text: TextSpan(
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: '¡Felicidades!',
+                                          style: AppTextStyle(context).bold18(color: AppColors.quaternaryConst),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              ' Has completado todas tus asistencias de hoy',
+                                          style: AppTextStyle(
+                                            context,
+                                          ).bold18(fontWeight: FontWeight.w300,color: AppColors.quaternaryConst),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+        
+                                BtnPrimaryInk(
+                                  text: 'Ok, salir',
+                                  onTap: () {
+                                    homeProvider.goToLogin(context);
+                                  },
+                                ),
+                                SizedBox(),
+                              ],
+                            ),
+                          ),
+                        )
+                        : const Expanded(child: CameraScreen());
+                  },
+                ),
+              ],
             ),
-          ),
-        ],
+            Positioned(
+              top: 50.0,
+              child: ConfettiWidget(
+                gravity: 1.0,
+                confettiController: homeProvider.confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                blastDirection: pi / 2,
+                numberOfParticles: 300,
+                maxBlastForce: 50,
+                emissionFrequency: 0.2,
+                
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

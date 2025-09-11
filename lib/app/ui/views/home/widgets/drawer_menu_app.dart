@@ -6,8 +6,8 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/ui/components/alert/cupertino_alert_dialog_comp.dart';
 import 'package:semco_app_asistio/app/ui/components/alert_dialog_component.dart';
-import 'package:semco_app_asistio/app/ui/views/home/home_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/login/login_controller.dart';
+import 'package:semco_app_asistio/app/ui/views/home/home_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/login/login_provider.dart';
 import 'package:semco_app_asistio/core/helpers/constant.dart';
 import 'package:semco_app_asistio/core/theme/app_colors.dart';
 import 'package:semco_app_asistio/core/theme/app_text_style.dart';
@@ -17,15 +17,23 @@ class DrawerMenuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homecontroller = Provider.of<HomeController>(context, listen: false);
-    final loginController = Provider.of<LoginController>(context);
+
+    final homecontroller = Provider.of<HomeProvider>(context, listen: false);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final homeController =
+          Provider.of<HomeProvider>(context, listen: false);
+      final loginController = Provider.of<LoginProvider>(context, listen: false);
+     homeController.getPhotoProfile(loginController.imgPerson);
+    });
+  
     bool whatPlatformIs = false;
 
     if (!kIsWeb) {
       whatPlatformIs = Platform.isIOS;
     } else {}
     print('hola drawer');
-    print('😊${loginController.imgPerson}');
+    
     Widget buildProfileImage(BuildContext context, String base64String) {
       Widget defaultAvatar() {
         return CircleAvatar(
@@ -59,10 +67,16 @@ class DrawerMenuApp extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Consumer<LoginController>(
+            // Consumer<HomeController>(
+            //   builder: (context, homeController, child) {
+            //     print('😊${homeController.imgPerson}');
+            //     return buildProfileImage(context, homeController.imgPerson);
+            //   },
+            // ),
+            Consumer<LoginProvider>(
               builder: (context, loginController, child) {
-                print('😊${loginController.imgPerson}');
-                return buildProfileImage(context, loginController.imgPerson);
+                print('😊${loginController.imgPerson}'); 
+                return buildProfileImage(context, '');
               },
             ),
             // buildProfileImage(context, loginController.imgPerson),

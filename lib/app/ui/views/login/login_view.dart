@@ -1,9 +1,9 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/ui/components/btn_primary_ink.dart';
 import 'package:semco_app_asistio/app/ui/components/field_form.dart';
-import 'package:semco_app_asistio/app/ui/views/login/login_controller.dart';
+import 'package:semco_app_asistio/app/ui/views/home/home_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/login/login_provider.dart';
 import 'package:semco_app_asistio/core/theme/app_colors.dart';
 import 'package:semco_app_asistio/core/theme/app_text_style.dart';
 
@@ -13,7 +13,17 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ya que se está utilizando Provider, no necesitas definirlo de nuevo aquí.
-    final logincontroller = Provider.of<LoginController>(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final loginController = Provider.of<LoginProvider>(
+        context,
+        listen: false,
+      );
+      loginController.onInit();
+    });
+
+    final logincontroller = Provider.of<LoginProvider>(context, listen: false);
+    // final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
     Widget imageLogo = Row(
       spacing: 5.0,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -44,6 +54,7 @@ class LoginView extends StatelessWidget {
       label: "Contraseña",
       hintText: "Ingresa tu contraseña",
       privateText: logincontroller.toggleVisibility,
+
       suffix: GestureDetector(
         onTap: () {
           logincontroller.seePassword();
@@ -73,26 +84,29 @@ class LoginView extends StatelessWidget {
       textEditingController: logincontroller.ctrlUserText,
     );
 
-    Widget rememberPass = InkWell(
-      onTap: () => logincontroller.checkRememberPass(),
-      child: Row(
-        children: [
-          Checkbox(
-            activeColor: AppColors.primary(context),
-            value: logincontroller.rememberPass,
-            onChanged: (_) {
-              logincontroller.checkRememberPass();
-            },
-          ),
-          Text(
-            "Recordar datos",
-            style: AppTextStyle(context).bold14(
-              color: AppColors.quaternaryConst,
-              fontWeight: FontWeight.w300,
+    Widget rememberPass = Consumer<LoginProvider>(
+      builder:
+          (context, loginProvider, child) => InkWell(
+            onTap: () => loginProvider.checkRememberPass(),
+            child: Row(
+              children: [
+                Checkbox(
+                  activeColor: AppColors.primary(context),
+                  value: loginProvider.rememberPass,
+                  onChanged: (_) {
+                    loginProvider.checkRememberPass();
+                  },
+                ),
+                Text(
+                  "Recordar datos",
+                  style: AppTextStyle(context).bold14(
+                    color: AppColors.quaternaryConst,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
     );
 
     Widget forgotPassword = Row(
@@ -123,7 +137,10 @@ class LoginView extends StatelessWidget {
     Widget button = BtnPrimaryInk(
       loading: logincontroller.isLoading,
       text: logincontroller.isLoading ? 'Validando' : "Ingresar",
-      onTap: () => logincontroller.validateForm(context),
+      onTap: () {
+        logincontroller.validateForm(context);
+        // homeProvider.checkLocationPermission();
+      },
     );
 
     Widget footer = Row(
@@ -194,55 +211,55 @@ class LoginView extends StatelessWidget {
     } else if (widthScreen < 1000) {
       width = 400; //tablet
     } else {
-      width = 600;// Layout para escritorio
+      width = 600; // Layout para escritorio
     }
+
+    debugPrint('Hola Login');
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.backgroundColor(context),
-      body: ChangeNotifierProvider(
-        create: (_) => LoginController(),
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: SafeArea(
-            child: Center(
-              child: Container(
-                width: 400,
-                margin: EdgeInsets.all(16.0),
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundColor(context),
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.grayBlue.withOpacity(0.1),
-                      spreadRadius: 4,
-                      blurRadius: 7,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Título
-                    tittle,
-                    SizedBox(height: 30.0),
-                    // Usuario
-                    user,
-                    SizedBox(height: 30.0),
-                    // Contraseña
-                    password,
-                    SizedBox(height: 20.0),
-                    rememberPass,
-                    SizedBox(height: 10.0),
-                    forgotPassword,
-                    SizedBox(height: 20.0),
-                    //Boton
-                    button,
-                    SizedBox(height: 30.0),
-                    imageLogo,
-                    // footer,
-                  ],
-                ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: Center(
+            child: Container(
+              width: 400,
+              margin: EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundColor(context),
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.grayBlue.withOpacity(0.1),
+                    spreadRadius: 4,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Título
+                  tittle,
+                  SizedBox(height: 30.0),
+                  // Usuario
+                  user,
+                  SizedBox(height: 30.0),
+                  // Contraseña
+                  password,
+                  SizedBox(height: 20.0),
+                  rememberPass,
+                  SizedBox(height: 10.0),
+                  forgotPassword,
+                  SizedBox(height: 20.0),
+                  //Boton
+                  button,
+                  SizedBox(height: 30.0),
+                  imageLogo,
+                  // footer,
+                ],
               ),
             ),
           ),

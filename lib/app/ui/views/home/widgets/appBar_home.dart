@@ -4,19 +4,21 @@ import 'package:semco_app_asistio/core/theme/app_colors.dart';
 
 
 class AppBarHome extends StatelessWidget {
-  const AppBarHome({Key? key}) : super(key: key);
+  const AppBarHome({super.key});
 
   @override
   Widget build(BuildContext context) {
 
     return Container(
-        margin: EdgeInsets.only(top: kSizeBigLarge, /* left: kMarginApp.w */),
+        // margin: EdgeInsets.only(top: kSizeBigLarge),
+        margin: EdgeInsets.only(top: 20.0),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
+                  
                   height: kSizeNormalLarge,
                   width: kSizeNormalLarge,
                   decoration: BoxDecoration(
@@ -24,10 +26,10 @@ class AppBarHome extends StatelessWidget {
                     color: AppColors.backgroundColor(context),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.grayBlue.withOpacity(0.1),
-                        spreadRadius: 4,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
+                        color: AppColors.shadowColor(context),
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: const Offset(0, 0),
                       ),
                     ],
                   ),

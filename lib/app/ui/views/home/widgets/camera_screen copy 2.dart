@@ -1,4 +1,3 @@
-//Antes de adapatar a web
 import "dart:io";
 import "package:camera/camera.dart";
 import "package:flutter/material.dart";
@@ -7,7 +6,7 @@ import "package:semco_app_asistio/app/ui/components/btn_cancel.dart";
 import "package:semco_app_asistio/app/ui/components/btn_primary_ink.dart";
 import "package:semco_app_asistio/app/ui/components/btn_secondary.dart";
 import "package:semco_app_asistio/app/ui/components/field_form.dart";
-import "package:semco_app_asistio/app/ui/views/home/home_controller.dart";
+import "package:semco_app_asistio/app/ui/views/home/home_provider.dart";
 import "package:semco_app_asistio/core/theme/app_colors.dart";
 
 class CameraScreenCopy2 extends StatefulWidget {
@@ -33,7 +32,7 @@ class _CameraScreenState extends State<CameraScreenCopy2> {
     // });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final homecontroller =
-          Provider.of<HomeController>(context, listen: false);
+          Provider.of<HomeProvider>(context, listen: false);
       await homecontroller.initialize();
       homecontroller.getInfoAssistant();
     });
@@ -55,7 +54,7 @@ class _CameraScreenState extends State<CameraScreenCopy2> {
             )));
       case WidgetState.LOADED:
         final homecontroller =
-            Provider.of<HomeController>(context, listen: true);
+            Provider.of<HomeProvider>(context, listen: true);
 
         Widget comment = FieldForm(
           label: "Comentario",
@@ -223,7 +222,7 @@ class _CameraScreenState extends State<CameraScreenCopy2> {
   }
 
   Widget _buildScaffold(BuildContext context, Widget body) {
-    final homecontroller = Provider.of<HomeController>(context);
+    final homecontroller = Provider.of<HomeProvider>(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor(context),
       body: body,
@@ -246,7 +245,7 @@ class _CameraScreenState extends State<CameraScreenCopy2> {
   }
 
   Future<void> _takePicture() async {
-    final homecontroller = Provider.of<HomeController>(context, listen: false);
+    final homecontroller = Provider.of<HomeProvider>(context, listen: false);
     try {
       /* await _initializeControllerFuture; */
       final XFile xfile = await _cameraController.takePicture();

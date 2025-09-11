@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/ui/components/btn_primary_ink.dart';
 import 'package:semco_app_asistio/app/ui/components/field_form.dart';
-import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_controller.dart';
+import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_provider.dart';
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/leading.dart';
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/text_back_login.dart';
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/text_tittle.dart';
@@ -12,11 +11,11 @@ import 'package:semco_app_asistio/core/theme/app_colors.dart';
 import 'package:semco_app_asistio/core/theme/app_text_style.dart';
 
 class RecoverPassCode extends StatelessWidget {
-  const RecoverPassCode({Key? key}) : super(key: key);
+  const RecoverPassCode({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final recoverpassController = Provider.of<RecoverPassController>(context);
+    final recoverpassController = Provider.of<RecoverPassProvider>(context);
 
     /* 📌 Input de código de verificación */
     Widget inputCode = FieldForm(

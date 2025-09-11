@@ -5,8 +5,11 @@ import "dart:typed_data";
 import "package:confetti/confetti.dart";
 import "package:flutter/material.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import "package:geocoding/geocoding.dart";
+import "package:geolocator/geolocator.dart";
 import "package:intl/intl.dart";
 import "package:intl/intl_standalone.dart";
+import "package:latlong2/latlong.dart";
 import "package:semco_app_asistio/app/models/request/request_saveassistant_model.dart";
 import "package:semco_app_asistio/app/models/response/response_inforassistant_model.dart";
 import "package:semco_app_asistio/app/provider/user_provider.dart";
@@ -16,14 +19,28 @@ import "package:semco_app_asistio/app/ui/views/home/widgets/camera_screen.dart";
 import "package:semco_app_asistio/app/ui/views/login/login_view.dart";
 import "package:semco_app_asistio/app/ui/views/myprofile/myprofile_view.dart";
 import "package:semco_app_asistio/core/helpers/custom_snackbar.dart";
+import 'package:location/location.dart' as locations;
 
-class HomeController with ChangeNotifier {
+class HomeProvider with ChangeNotifier {
   //Instance
   final UserRepository userRepository = UserRepository();
   final UserProvider userProvider = UserProvider();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   //Variables
+  locations.Location location = locations.Location();
+  locations.LocationData? locationData;
+  double latitude = 0.0;
+  double longitude = 0.0;
+  String streetName = '';
+  LatLng _currentLocation = const LatLng(0, 0);
+
+  LatLng get currentLocation => _currentLocation;
+
+  void updateLocation(LatLng newLocation) {
+    _currentLocation = newLocation;
+    notifyListeners(); // Esto notifica a los widgets que usan este provider
+  }
 
   var now = DateTime.now();
   late Timer timer;
@@ -31,7 +48,6 @@ class HomeController with ChangeNotifier {
   var formatterDate = DateFormat('dd/MM/yy');
   var formatterTime = DateFormat('kk:mm');
   var monthName = DateFormat('MMMM', 'es');
-  
 
   File? imageFile;
   void updateImageFile(File pImageFile) {
@@ -115,6 +131,7 @@ class HomeController with ChangeNotifier {
 
   //traer información del usuario
   Future<void> getInfoAssistant() async {
+    dataInfoAssistant.clear();
     try {
       final response = await userRepository.getInfoAssistant(personalId);
       if (!response.success) {
@@ -122,6 +139,7 @@ class HomeController with ChangeNotifier {
       }
       dataInfoAssistant = response.data ?? [];
       infoAssistObject = dataInfoAssistant[0];
+    
     } catch (e) {
     } finally {
       notifyListeners();
@@ -131,6 +149,7 @@ class HomeController with ChangeNotifier {
   String asisstandId = '';
   Future<void> postRegisterAssist(context) async {
     isRegisteredAssist = true;
+    await checkLocationPermission();
     try {
       // if (imageFile != null) await postSaveImage(imageFile!);
       if (imageBytes != null) await postSaveImageBytes(imageBytes!);
@@ -145,6 +164,7 @@ class HomeController with ChangeNotifier {
         );
         return;
       }
+      print(latitude.toString() + longitude.toString());
       final response = await userProvider.postSaveAssistant(
         RequestSaveassistantModel(
           pAsistenciaid: infoAssistObject.asistenciaId,
@@ -152,6 +172,9 @@ class HomeController with ChangeNotifier {
           pTipo: infoAssistObject.asistenciaTipo ?? '',
           pComentario: ctrlComment.text,
           pTextFoto: pathOfImage,
+          iLatitude: latitude,
+          iLongitude: longitude,
+          iNameLoc: streetName,
         ),
       );
       if (response.ppAsistenciaid.isEmpty) {
@@ -186,6 +209,14 @@ class HomeController with ChangeNotifier {
       activateConffeti();
       getInfoAssistant();
     } catch (e) {
+      CustomSnackbar.showSnackBarSuccess(
+        context,
+        title: "Validar!",
+        message:
+            "Ocurrio un error, tratando de registrar su asistencia, por favor intente nuevamente",
+        type: 1,
+        time: 2,
+      );
     } finally {
       isRegisteredAssist = false;
       imageFile = null;
@@ -229,8 +260,6 @@ class HomeController with ChangeNotifier {
     }
   }
 
- 
-
   /* 📌 Obtener fecha y hora */
   Future<String> getFormattedDate() async {
     formatterDate = DateFormat('dd/MM/yy');
@@ -256,10 +285,17 @@ class HomeController with ChangeNotifier {
   }
 
   /* 📌 Regresar a login */
+  // void goToLogin(BuildContext context) {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => const LoginView()),
+  //     (Route<dynamic> route) => false, // elimina todo lo anterior
+  //   );
+  // }
   void goToLogin(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const LoginView()),
+      (Route<dynamic> route) => false, // elimina todo lo anterior
     );
   }
 
@@ -282,6 +318,54 @@ class HomeController with ChangeNotifier {
       context,
       MaterialPageRoute(builder: (context) => const HomeView()),
     );
+  }
+
+  void getPhotoProfile(String imagePerson) {
+    imgPerson = imagePerson;
+    notifyListeners();
+  }
+
+  //Chequear los permisos de ubicación
+  Future<void> checkLocationPermission() async {
+    final hasPermission = await location.hasPermission();
+    if (hasPermission == locations.PermissionStatus.denied) {
+      final requestPermission = await location.requestPermission();
+      if (requestPermission != locations.PermissionStatus.granted) {
+        //ha denegado los permisos de ubicación.
+        // mensaje de error o solicitar permisos nuevamente.
+        return;
+      }
+    }
+    await getCurrentLocation();
+    await getNameLocation();
+  }
+
+  //Optener ubicación actual
+  Future<void> getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    updateLocation(LatLng(position.latitude, position.longitude));
+    // currentLocation = LatLng(position.latitude, position.longitude); // -12.086660314676623,-76.99120477371234
+    latitude = position.latitude;
+    longitude = position.longitude;
+    //
+
+    print(latitude.toString() + ' y ' + longitude.toString());
+  }
+
+  //Optener nombre de ubicación actual
+  getNameLocation() async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      latitude,
+      longitude,
+    );
+    if (placemarks.isNotEmpty) {
+      Placemark placemark = placemarks[0];
+      streetName = placemark.street ?? '';
+    } else {
+      streetName = "Desconocido";
+    }
   }
 
   @override

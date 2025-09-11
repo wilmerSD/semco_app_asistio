@@ -78,14 +78,13 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 }
  */
+
 import "dart:io";
 import "package:camera/camera.dart";
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:provider/provider.dart";
 import "package:semco_app_asistio/app/ui/components/btn_cancel.dart";
-import "package:semco_app_asistio/app/ui/views/home/home_controller.dart";
+import "package:semco_app_asistio/app/ui/views/home/home_provider.dart";
 import "package:semco_app_asistio/core/theme/app_colors.dart";
 
 class CameraScreenCopy extends StatefulWidget {
@@ -183,7 +182,7 @@ class _CameraScreenState extends State<CameraScreenCopy> {
   }
 
   Widget _buildScaffold(BuildContext context, Widget body) {
-    final homecontroller = Provider.of<HomeController>(context);
+    final homecontroller = Provider.of<HomeProvider>(context);
     return Scaffold(
       body: body, 
     );

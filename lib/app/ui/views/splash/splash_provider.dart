@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:semco_app_asistio/app/repository/user_repository.dart';
 
-class SplashController with ChangeNotifier{
+class SplashProvider with ChangeNotifier{
   String username = '';
   String password = '';
   String personalId = '';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_controller.dart';
+import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_provider.dart';
 import 'package:semco_app_asistio/core/theme/app_colors.dart';
 import 'package:semco_app_asistio/core/theme/app_text_style.dart';
 
@@ -9,7 +9,7 @@ class TextBackLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recoverPassController =  Provider.of<RecoverPassController>(context);
+    final recoverPassController =  Provider.of<RecoverPassProvider>(context);
     return InkWell(
       onTap: () => recoverPassController.goToLogin(context),
       child: RichText(

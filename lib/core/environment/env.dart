@@ -19,7 +19,7 @@ extension Environment on ENV {
       case ENV.QA:
         return {
           "enviroment": "QA",
-          "baseUrl": "https://apps.semco.com.pe/asistenciaqa/General/APIAssistant",
+          "baseUrl": "https://apps.semco.com.pe/asistio_qa/General/APIAssistant",
           "connectTimeout": 600000,
           "receiveTimeout": 600000,
         };

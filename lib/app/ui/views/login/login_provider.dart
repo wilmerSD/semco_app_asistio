@@ -10,11 +10,12 @@ import "package:semco_app_asistio/core/helpers/custom_snackbar.dart";
 import "package:semco_app_asistio/core/helpers/keys.dart";
 import "package:url_launcher/url_launcher.dart";
 
-class LoginController with ChangeNotifier {
+class LoginProvider with ChangeNotifier {
   
   int counter = 0;
-  TextEditingController ctrlUserText = TextEditingController(text: 'Jose.sanchez');
-  TextEditingController ctrlPasswordText = TextEditingController(text:'jsanchezSemco07');
+  TextEditingController ctrlUserText = TextEditingController(text: '');//Jose.sanchez
+  TextEditingController ctrlPasswordText = TextEditingController(text:'');//jsanchezSemco07
+  String saveCredential = '';
   bool isVisibleIcon = false;
   bool isLoading = false;
   bool rememberPass = false;
@@ -28,7 +29,6 @@ class LoginController with ChangeNotifier {
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   final UserRepository userRepository = UserRepository();
   void onInit(){
-    if(isInitalized) return;
     getUserAndPass();
   }
 
@@ -42,6 +42,11 @@ class LoginController with ChangeNotifier {
   void getUserAndPass() async{
     ctrlUserText.text = await secureStorage.read(key: "kUserName")?? '';
     ctrlPasswordText.text  = await secureStorage.read(key: "kPassword") ?? '';
+    saveCredential = await secureStorage.read(key: "kSaveCredential") ?? '';
+    if (saveCredential == 'true'){
+      rememberPass = true;
+    }
+    notifyListeners();
   }
   /* 📌 Regresar a login */
   void goToRecoverPass(BuildContext context) {
@@ -110,12 +115,13 @@ class LoginController with ChangeNotifier {
           title: "Validar!",
           message: "Ups! Ocurrió un error, ${response.statusMessage}",
           type: 1,
-          time: 2,
+          time: 2, 
         );
         return;
       }
       responseData = response.data![0];
       imgPerson = responseData.personalPhoto ?? '';
+      
       if(rememberPass) {
         await secureStorage.write(key: Keys.kUserName, value: ctrlUserText.text);
         await secureStorage.write(key: Keys.kPassword, value: ctrlPasswordText.text);
@@ -125,8 +131,9 @@ class LoginController with ChangeNotifier {
       await secureStorage.write(key: Keys.kIdRole, value: responseData.personalRol);
       await secureStorage.write(key: Keys.kNameUser, value: responseData.personalNombreCompleto);
       await secureStorage.write(key: Keys.kEmail, value: responseData.personalCorreo);
-         notifyListeners();
-        goToHome(context);
+      await secureStorage.write(key: Keys.kSaveCredential, value: rememberPass.toString());
+      goToHome(context);
+      
       }catch(e){
         CustomSnackbar.showSnackBarSuccess(
             context,

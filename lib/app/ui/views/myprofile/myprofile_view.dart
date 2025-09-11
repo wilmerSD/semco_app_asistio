@@ -1,18 +1,17 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/ui/components/alert/cupertino_alert_dialog_comp.dart';
 import 'package:semco_app_asistio/app/ui/components/alert_dialog_component.dart';
 import 'package:semco_app_asistio/app/ui/components/leading_appbar.dart';
-import 'package:semco_app_asistio/app/ui/views/home/home_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/login/login_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/myprofile/myprofile_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/splash/splash_controller.dart';
-import 'package:semco_app_asistio/core/helpers/helpers.dart';
+import 'package:semco_app_asistio/app/ui/views/home/home_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/myprofile/myprofile_provider.dart';
 import 'package:semco_app_asistio/core/preferences/shared_preferences.dart';
 import 'package:semco_app_asistio/core/preferences/theme_provider.dart';
+import 'package:semco_app_asistio/core/routes/app_routes_name.dart';
 import 'package:semco_app_asistio/core/theme/app_colors.dart';
 import 'package:semco_app_asistio/core/theme/app_text_style.dart';
 
@@ -21,10 +20,7 @@ class MyprofileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myprofilecontroller = Provider.of<MyprofileController>(context);
-    final loginController = Provider.of<LoginController>(context);
-    final splashController = Provider.of<SplashController>(context);
-    final homeController = Provider.of<HomeController>(context);
+    final myprofilecontroller = Provider.of<MyprofileProvider>(context);
     final prefs = PreferencesUser();
     bool whatPlatformIs = false;
 
@@ -42,8 +38,13 @@ class MyprofileView extends StatelessWidget {
                 backgroundColor:
                     myprofilecontroller.profileImage != null
                         ? AppColors.primaryConst
-                        : const Color.fromARGB(29, 254, 144, 0), //const Color.fromARGB(255, 207, 207, 207),
-                radius: 80, 
+                        : const Color.fromARGB(
+                          29,
+                          254,
+                          144,
+                          0,
+                        ), //const Color.fromARGB(255, 207, 207, 207),
+                radius: 80,
                 backgroundImage:
                     myprofilecontroller.profileImage != null
                         ? FileImage(myprofilecontroller.profileImage!)
@@ -51,18 +52,23 @@ class MyprofileView extends StatelessWidget {
                 child:
                     myprofilecontroller.profileImage != null
                         ? const SizedBox()
-                        : const Icon(Icons.person, size: 80, color: Color.fromARGB(113, 254, 144, 0),),
+                        : const Icon(
+                          Icons.person,
+                          size: 80,
+                          color: Color.fromARGB(113, 254, 144, 0),
+                        ),
               ),
-              Positioned(
+              /*  Positioned(
                 bottom: 0,
                 right: 0,
                 child: InkWell(
                   onTap: () => myprofilecontroller.pickImageFromGallery(),
                   child: const Icon(Iconsax.edit_outline),
                 ),
-              ) /* CircleAvatar(
+              )  */
+              /* CircleAvatar(
                           backgroundColor: AppColors.blueCustom,
-                          child: Icon(Iconsax.edit_outline, color: Colors.white,))) */,
+                          child: Icon(Iconsax.edit_outline, color: Colors.white,))) */
             ],
           ),
         ),
@@ -115,8 +121,9 @@ class MyprofileView extends StatelessWidget {
               return CupertinoAlertDialogComp(
                 tittle: '¿Seguro que quieres salir de Asistio?',
                 onTapButton: () {
-                  homeController.goToLogin(context);
-                }, //Helpers.goToLoginRemoveUntil(context),
+                  context.read<HomeProvider>().goToLogin(context);
+                  // context.go(AppRoutesName.LOGIN);
+                },
               );
             },
           );
@@ -125,12 +132,11 @@ class MyprofileView extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return AlertDialogComponent(
-                onTapButton:
-                    () => {
-                      homeController.goToLogin(context)
-                      // Provider.of<HomeController>(context, listen: false).onClose(),
-                      // Helpers.goToLoginRemoveUntil(context)
-                    },
+                onTapButton: () {
+                  context.read<HomeProvider>().goToLogin(context);
+                  // context.go(AppRoutesName.LOGIN);
+                },
+
                 title: "¿Seguro que quieres salir de Asistio?",
               );
             },

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/ui/components/btn_primary_ink.dart';
 import 'package:semco_app_asistio/app/ui/components/field_form.dart';
-import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_controller.dart';
+import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_provider.dart';
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/leading.dart';
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/text_back_login.dart';
 import 'package:semco_app_asistio/app/ui/views/recoverpass/widgets/text_tittle.dart';
@@ -12,7 +12,7 @@ class RecoverPasswordEmail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recoverpassController = Provider.of<RecoverPassController>(context);
+    final recoverpassController = Provider.of<RecoverPassProvider>(context);
 
     /* 📌 Input de email */
     Widget inputEmail = FieldForm(

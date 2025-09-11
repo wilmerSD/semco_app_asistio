@@ -26,8 +26,8 @@ class AppColors {
 
   static Color shadowColor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
-        ? const Color.fromARGB(31, 114, 114, 114) //dark
-        : const Color.fromARGB(50, 206, 206, 206); //light
+        ? const Color.fromRGBO(70, 70, 70, 1) //dark
+        : const Color.fromRGBO(239, 239, 239, 1); //light
   }
 
   static Color textBasic(BuildContext context) {
@@ -50,6 +50,7 @@ class AppColors {
   
 
   static const Color primaryConst = Color.fromRGBO(254, 142, 0, 1);
+  static const Color shadowBtnMainColor = Color.fromRGBO(254, 142, 0, 1);
   static const Color quaternaryConst = Color.fromRGBO(109, 108, 108, 1);
   
   static const Color primaryWC = Color.fromRGBO(230, 230, 241, 1);

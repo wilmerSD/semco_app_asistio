@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:semco_app_asistio/app/provider/user_provider.dart';
-import 'package:semco_app_asistio/app/ui/views/home/home_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/login/login_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/myprofile/myprofile_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_controller.dart';
-import 'package:semco_app_asistio/app/ui/views/splash/splash_controller.dart';
+import 'package:semco_app_asistio/app/ui/views/home/home_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/login/login_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/myprofile/myprofile_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/recoverpass/recover_password_provider.dart';
+import 'package:semco_app_asistio/app/ui/views/splash/splash_provider.dart';
 import 'package:semco_app_asistio/app/ui/views/splash/splash_view.dart';
 import 'package:semco_app_asistio/core/config/app_config.dart';
 import 'package:semco_app_asistio/core/config/theme_app.dart';
@@ -30,11 +30,11 @@ void main() async{
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => HomeController()),
-        ChangeNotifierProvider(create: (_) => LoginController()),
-        ChangeNotifierProvider(create: (_) => RecoverPassController()),
-        ChangeNotifierProvider(create: (_) => MyprofileController()),
-        ChangeNotifierProvider(create: (_) => SplashController()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => RecoverPassProvider()),
+        ChangeNotifierProvider(create: (_) => MyprofileProvider()),
+        ChangeNotifierProvider(create: (_) => SplashProvider()),
         // Otros controladores
 
         ChangeNotifierProvider(create: (_) => ThemeProvider(darkMode: PreferencesUser().themeBool)),

@@ -56,7 +56,7 @@ class UserProvider with ChangeNotifier {
     RequestSaveassistantModel request,
   ) async {
     final response = await dioClient.post(
-      path: "/PostProc_GuardarAsistencia",
+      path: "/SaveAssist",
       bodyRaw: request.toJson(),
     );
     return ResponseSaveassistantModel.fromJson(response);

@@ -1,13 +1,12 @@
 import 'dart:io';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-class MyprofileController with ChangeNotifier {
-  static final MyprofileController _instance = MyprofileController._internal();
-  factory MyprofileController() => _instance;
-  MyprofileController._internal();
+class MyprofileProvider with ChangeNotifier {
+  static final MyprofileProvider _instance = MyprofileProvider._internal();
+  factory MyprofileProvider() => _instance;
+  MyprofileProvider._internal();
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   
   //VARIABLES
