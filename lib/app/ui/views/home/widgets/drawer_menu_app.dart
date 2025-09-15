@@ -21,10 +21,10 @@ class DrawerMenuApp extends StatelessWidget {
     final homecontroller = Provider.of<HomeProvider>(context, listen: false);
     
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final homeController =
-          Provider.of<HomeProvider>(context, listen: false);
-      final loginController = Provider.of<LoginProvider>(context, listen: false);
-     homeController.getPhotoProfile(loginController.imgPerson);
+    //   final homeController =
+    //       Provider.of<HomeProvider>(context, listen: false);
+    //   final loginController = Provider.of<LoginProvider>(context, listen: false);
+    //  homeController.getPhotoProfile(loginController.imgPerson);
     });
   
     bool whatPlatformIs = false;
@@ -73,12 +73,13 @@ class DrawerMenuApp extends StatelessWidget {
             //     return buildProfileImage(context, homeController.imgPerson);
             //   },
             // ),
-            Consumer<LoginProvider>(
-              builder: (context, loginController, child) {
-                print('😊${loginController.imgPerson}'); 
-                return buildProfileImage(context, '');
-              },
-            ),
+            // Consumer<LoginProvider>(
+            //   builder: (context, loginController, child) {
+            //     print('😊${loginController.imgPerson}'); 
+            //     return buildProfileImage(context, '');
+            //   },
+            // ),
+            buildProfileImage(context, ''),
             // buildProfileImage(context, loginController.imgPerson),
             // CircleAvatar(
             //   backgroundColor: AppColors.primary(context),

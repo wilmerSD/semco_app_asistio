@@ -31,7 +31,7 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
-        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        // ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => RecoverPassProvider()),
         ChangeNotifierProvider(create: (_) => MyprofileProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),
